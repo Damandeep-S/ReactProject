@@ -1,4 +1,4 @@
-import { useState, useCallback,useEffect } from "react";
+import { useState, useCallback,useEffect, useRef } from "react";
 import "./App.css";
 
 function App() {
@@ -6,6 +6,9 @@ function App() {
   const [numberAllow, setnumberAllow] = useState(false);
   const [charAllow, setcharAllow] = useState(false);
   const [password, setPassword] = useState("");
+
+  // useRef hook
+  const passwordRef = useRef(null)
 
   const passwordGenerator = useCallback(() => {
     let pass = "";
@@ -24,7 +27,12 @@ function App() {
     
     setPassword(pass);
 
-  }, [length, numberAllow, charAllow, setPassword]);
+  }, [length, numberAllow, charAllow]);
+
+  const copyPassword=useCallback(()=>{
+    passwordRef.current?.select()
+    window.navigator.clipboard.writeText(password)         //as we are working in the core react, but cant do it in next js because code is execute in server
+  },[password])
 
   useEffect(()=>{passwordGenerator()},[length,numberAllow,charAllow,passwordGenerator])
 
@@ -39,8 +47,9 @@ function App() {
             className="outline-none w-full py-1 px-3"
             placeholder="Password"
             readOnly
+            ref={passwordRef}
           />
-          <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
+          <button onClick={copyPassword} className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
             copy
           </button>
         </div>
